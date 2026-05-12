@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-i18n="pageTitle">Web3 量化脚本专家 - 策略定制与维护</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;500;700&family=JetBrains+Mono:wght@400;700&display=swap');
+        
+        :root {
+            --primary: #00f2fe;
+            --secondary: #4facfe;
+            --bg-dark: #07090f;
+            --card-bg: rgba(255, 255, 255, 0.03);
+            --card-border: rgba(255, 255, 255, 0.08);
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background-color: var(--bg-dark);
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(79, 172, 254, 0.08), transparent 25%),
+                radial-gradient(circle at 85% 30%, rgba(0, 242, 254, 0.08), transparent 25%);
+            color: var(--text-main);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* 语言切换按钮样式 */
+        .lang-switch {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--card-border);
+            color: var(--text-muted);
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+            backdrop-filter: blur(10px);
+        }
+
+        .lang-switch:hover {
+            color: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 60px 20px;
+            text-align: center;
+            position: relative;
+        }
+
+        header {
+            margin-bottom: 60px;
+            margin-top: 20px;
+        }
+
+        h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -1px;
+        }
+
+        p.subtitle {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            font-weight: 300;
+            max-width: 600px;
+            margin: 0 auto 30px auto;
+        }
+
+        @keyframes pulse-glow {
+            0% { box-shadow: 0 0 0 0 rgba(0, 242, 254, 0.4); }
+            70% { box-shadow: 0 0 0 15px rgba(0, 242, 254, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(0, 242, 254, 0); }
+        }
+
+        .hero-btn {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: #07090f;
+            border: none;
+            padding: 16px 40px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            border-radius: 50px;
+            cursor: pointer;
+            animation: pulse-glow 2s infinite;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .hero-btn:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 10px 30px rgba(0, 242, 254, 0.3);
+        }
+
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 30px;
+            margin-bottom: 60px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 40px 30px;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+            text-align: left;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; height: 3px;
+            background: linear-gradient(90deg, transparent, var(--primary), transparent);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+            border-color: rgba(0, 242, 254, 0.3);
+            box-shadow: 0 10px 40px rgba(0, 242, 254, 0.1);
+        }
+
+        .card:hover::before {
+            opacity: 1;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .card h3 {
+            font-size: 1.5rem;
+            margin: 0;
+            color: #fff;
+        }
+
+        .price {
+            font-size: 2.5rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 30px;
+        }
+
+        .price span {
+            font-size: 1rem;
+            color: var(--text-muted);
+            font-family: 'Inter', sans-serif;
+            font-weight: 400;
+        }
+
+        .features {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .features li {
+            margin-bottom: 15px;
+            color: #cbd5e1;
+            display: flex;
+            align-items: flex-start;
+        }
+
+        .features li::before {
+            content: "✦";
+            color: var(--secondary);
+            margin-right: 12px;
+            font-size: 1.1rem;
+        }
+
+        .info-panel {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 40px;
+            backdrop-filter: blur(10px);
+        }
+
+        .info-panel h2 {
+            font-size: 1.5rem;
+            margin-top: 0;
+            color: #fff;
+        }
+
+        .code-box {
+            background: #000;
+            padding: 15px 20px;
+            border-radius: 10px;
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--primary);
+            border: 1px solid #1e293b;
+            margin: 20px auto;
+            max-width: 600px;
+            word-break: break-all;
+            position: relative;
+        }
+
+        .contact-methods {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        .contact-btn {
+            background: linear-gradient(135deg, #1e293b, #0f172a);
+            border: 1px solid #334155;
+            color: #e2e8f0;
+            padding: 12px 28px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        .contact-btn:hover {
+            background: linear-gradient(135deg, rgba(0, 242, 254, 0.1), rgba(79, 172, 254, 0.1));
+            border-color: var(--primary);
+            color: #fff;
+            box-shadow: 0 0 15px rgba(0, 242, 254, 0.2);
+        }
+
+        .badge {
+            background: rgba(0, 242, 254, 0.1);
+            color: var(--primary);
+            border: 1px solid rgba(0, 242, 254, 0.3);
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        footer {
+            margin-top: 80px;
+            color: #475569;
+            font-size: 0.9rem;
+            border-top: 1px solid var(--card-border);
+            padding-top: 30px;
+        }
+
+
+/* --- 专门针对手机端的终极优化 --- */
+        @media (max-width: 768px) {
+            .container {
+                padding: 30px 15px; /* 缩小手机端边缘留白 */
+            }
+            h1 {
+                font-size: 2.2rem; /* 手机上标题稍微缩放，防止换行太碎 */
+            }
+            .pricing-grid {
+                grid-template-columns: 1fr; /* 强制手机端卡片上下排列 */
+            }
+            .card {
+                padding: 30px 20px;
+            }
+            .hero-btn {
+                width: 100%; /* 手机上的主按钮撑满屏幕，更容易点击 */
+                justify-content: center;
+                padding: 14px 20px;
+                font-size: 1.1rem;
+            }
+            .lang-switch {
+                top: 10px; 
+                right: 10px; 
+                padding: 6px 12px; 
+                font-size: 0.8rem; /* 语言切换按钮在手机上稍微变小，不挡视线 */
+            }
+            .contact-btn {
+                width: 100%; /* 手机端底部联系按钮也是满宽排布 */
+                justify-content: center;
+            }
+            .price {
+                font-size: 2.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <button class="lang-switch" onclick="toggleLanguage()" id="langBtn">EN / 中文</button>
+
+    <div class="container">
+        <header>
+            <h1 data-i18n="mainTitle">量化交易脚本定制中心</h1>
+            <p class="subtitle" data-i18n="subTitle">将您的交易逻辑转化为不知疲倦的印钞机。专业级 Web3 合约交互与自动化风控策略定制。</p>
+            
+            <button class="hero-btn" onclick="Tawk_API.toggle()">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                <span data-i18n="heroBtn">立即咨询量化需求</span>
+            </button>
+        </header>
+
+        <div class="pricing-grid">
+            <div class="card">
+                <div class="card-header">
+                    <h3 data-i18n="card1Title">量化脚本定制</h3>
+                </div>
+                <div class="price">50 <span data-i18n="card1Price">USDT / 起</span></div>
+                <ul class="features">
+                    <li><strong data-i18n="card1F1">完全按照您的独家交易策略编写</strong></li>
+                    <li data-i18n="card1F2">支持网格、马丁格尔、均值回归等多因子模型</li>
+                    <li data-i18n="card1F3">毫秒级市场监控，全自动执行开平仓逻辑</li>
+                    <li data-i18n="card1F4">严格的止盈止损风控安全机制</li>
+                    <li data-i18n="card1F5">提供源码级交付与详细部署文档</li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h3 data-i18n="card2Title">服务器托管与维护</h3>
+                    <span class="badge" data-i18n="card2Badge">省心优选</span>
+                </div>
+                <div class="price">20 <span data-i18n="card2Price">USDT / 月</span></div>
+                <ul class="features">
+                    <li data-i18n="card2F1">免费提供高配置、低延迟的海外专属服务器</li>
+                    <li data-i18n="card2F2">24小时 / 7天 守护进程，崩溃自动重启</li>
+                    <li data-i18n="card2F3">随交易所 API 变动提供免费接口升级</li>
+                    <li data-i18n="card2F4">策略逻辑参数微调与日常运行监控反馈</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="info-panel">
+            <h2 data-i18n="paymentTitle">USDT 收款地址 (TRC20)</h2>
+            <p style="color: var(--text-muted); font-size: 0.95rem;" data-i18n="paymentSub">为确保您的资产安全，转账前请务必仔细核对网络类型与地址尾数。</p>
+            <div class="code-box">
+                TQ2SjMuTaj8Lta8XnYh8QqhyEBa9xDQMA8
+            </div>
+            <p style="font-size: 0.85rem; color: #64748b; margin-top: 15px;" data-i18n="paymentNote">* 支付完成后，请截图支付凭证并通过客服确认需求细节。</p>
+        </div>
+
+        <div class="info-panel">
+            <h2 data-i18n="contactTitle">发起私密咨询</h2>
+            <p style="color: var(--text-muted); font-size: 0.95rem;" data-i18n="contactSub">若不方便使用网页在线客服，请使用 Session 加密聊天添加我的匿名 ID：</p>
+            <div class="code-box" style="font-size: 0.9rem; color: #fff;">
+                0560b42c7986f92a9e98e3cf1be0c762fa561d905513b80f9390fb7a79dae7737f
+            </div>
+            <div class="contact-methods">
+                <button class="contact-btn" onclick="Tawk_API.toggle()">
+                    💬 <span data-i18n="chatBtn">网页在线客服</span>
+                </button>
+                <a href="mailto:smsaut3344@gmail.com" class="contact-btn">
+                    ✉️ <span data-i18n="emailBtn">发送加密邮件</span>
+                </a>
+            </div>
+        </div>
+
+        <footer>
+            <p>© 2026 QuantScript Web3 Studio. Build for Traders.</p>
+        </footer>
+    </div>
+
+    <script>
+        // 翻译字典（中英双语库）
+        const translations = {
+            "zh": {
+                "pageTitle": "Web3 量化脚本专家 - 策略定制与维护",
+                "mainTitle": "量化交易脚本定制中心",
+                "subTitle": "将您的交易逻辑转化为不知疲倦的印钞机。专业级 Web3 合约交互与自动化风控策略定制。",
+                "heroBtn": "立即咨询量化需求",
+                "card1Title": "量化脚本定制",
+                "card1Price": "USDT / 起",
+                "card1F1": "完全按照您的独家交易策略编写",
+                "card1F2": "支持网格、马丁格尔、均值回归等多因子模型",
+                "card1F3": "毫秒级市场监控，全自动执行开平仓逻辑",
+                "card1F4": "严格的止盈止损风控安全机制",
+                "card1F5": "提供源码级交付与详细部署文档",
+                "card2Title": "服务器托管与维护",
+                "card2Badge": "省心优选",
+                "card2Price": "USDT / 月",
+                "card2F1": "免费提供高配置、低延迟的海外专属服务器",
+                "card2F2": "24小时 / 7天 守护进程，崩溃自动重启",
+                "card2F3": "随交易所 API 变动提供免费接口升级",
+                "card2F4": "策略逻辑参数微调与日常运行监控反馈",
+                "paymentTitle": "USDT 收款地址 (TRC20)",
+                "paymentSub": "为确保您的资产安全，转账前请务必仔细核对网络类型与地址尾数。",
+                "paymentNote": "* 支付完成后，请截图支付凭证并通过客服确认需求细节。",
+                "contactTitle": "发起私密咨询",
+                "contactSub": "若不方便使用网页在线客服，请使用 Session 加密聊天添加我的匿名 ID：",
+                "chatBtn": "网页在线客服",
+                "emailBtn": "发送加密邮件"
+            },
+            "en": {
+                "pageTitle": "Web3 Quant Script Expert - Customization & Maintenance",
+                "mainTitle": "Quant Trading Script Customization",
+                "subTitle": "Turn your trading logic into a tireless automated profit engine. Professional Web3 smart contract interaction and risk management.",
+                "heroBtn": "Consult Your Needs Now",
+                "card1Title": "Script Customization",
+                "card1Price": "USDT / From",
+                "card1F1": "Coded strictly according to your exclusive trading strategy",
+                "card1F2": "Supports Grid, Martingale, Mean Reversion & multi-factor models",
+                "card1F3": "Millisecond market monitoring, auto-execution of open/close logic",
+                "card1F4": "Strict Take-Profit/Stop-Loss risk management mechanisms",
+                "card1F5": "Source code delivery with detailed deployment documentation",
+                "card2Title": "Hosting & Maintenance",
+                "card2Badge": "Recommended",
+                "card2Price": "USDT / Month",
+                "card2F1": "Free high-performance, low-latency overseas dedicated server",
+                "card2F2": "24/7 daemon process with automatic crash restart",
+                "card2F3": "Free API interface upgrades matching exchange updates",
+                "card2F4": "Strategy parameter tweaking & daily operation monitoring",
+                "paymentTitle": "USDT Deposit Address (TRC20)",
+                "paymentSub": "To ensure your asset security, please double-check the network type and address suffix before transferring.",
+                "paymentNote": "* After payment, please send a screenshot to customer service to confirm details.",
+                "contactTitle": "Private Consultation",
+                "contactSub": "If live chat is inconvenient, please add my anonymous Session ID via encrypted chat:",
+                "chatBtn": "Live Chat Support",
+                "emailBtn": "Send Encrypted Email"
+            }
+        };
+
+        // 当前语言变量
+        let currentLang = "zh";
+
+        // 初始化：检测浏览器语言
+        function initLanguage() {
+            // 获取浏览器设置的语言 (例如 "zh-CN", "en-US")
+            const browserLang = navigator.language || navigator.userLanguage; 
+            
+            // 如果浏览器语言包含 "zh" (中文)，默认中文；否则默认英文
+            if (browserLang.toLowerCase().includes("zh")) {
+                currentLang = "zh";
+            } else {
+                currentLang = "en";
+            }
+            applyTranslations(currentLang);
+        }
+
+        // 应用翻译文本到网页上
+        function applyTranslations(lang) {
+            const elements = document.querySelectorAll("[data-i18n]");
+            elements.forEach(el => {
+                const key = el.getAttribute("data-i18n");
+                if (translations[lang] && translations[lang][key]) {
+                    el.innerHTML = translations[lang][key];
+                }
+            });
+            // 切换页面 title
+            document.title = translations[lang]["pageTitle"];
+        }
+
+        // 按钮手动切换中英文
+        function toggleLanguage() {
+            currentLang = currentLang === "zh" ? "en" : "zh";
+            applyTranslations(currentLang);
+        }
+
+        // 网页加载完成后自动执行初始化
+        document.addEventListener("DOMContentLoaded", initLanguage);
+    </script>
+
+    <script type="text/javascript">
+    var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+    (function(){
+    var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+    s1.async=true;
+    s1.src='https://embed.tawk.to/6a02b19d11568a1c34746fdd/default';
+    s1.charset='UTF-8';
+    s1.setAttribute('crossorigin','*');
+    s0.parentNode.insertBefore(s1,s0);
+    })();
+    </script>
+</body>
+</html>
